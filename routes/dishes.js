@@ -40,6 +40,17 @@ module.exports = function initialize (params) {
                     });
     };
 
+    module.getById = function(id, cb) {
+        db.collection('dishes').findOne({'_id': new ObjectId(id)}, function(err, item) {
+            if(err) {
+                console.log('not found');
+                cb();
+            } else {
+                cb(item);
+            }
+        });
+    }
+
     module.getCurrentMenu = function (req, res) {
         db.collection('menus').findOne({'active' : true}, function (err, item) {
                     if (err) {

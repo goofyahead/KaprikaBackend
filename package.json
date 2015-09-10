@@ -11,7 +11,10 @@
 		"cookie-parser": "~1.0.1",
 		"body-parser": "~1.0.0",
 		"connect-multiparty": "*",
-		"underscore" : "*"
+		"underscore" : "*",
+		"redis" : "0.12.1",
+		"braintree" : "1.29.0",
+		"async" : "1.4.2"
 		},
 	"engines": {
 		"node": "0.8.x",

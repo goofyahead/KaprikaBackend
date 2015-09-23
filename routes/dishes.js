@@ -54,7 +54,7 @@ module.exports = function initialize (params) {
     module.getCurrentMenu = function (req, res) {
         db.collection('menus').findOne({'active' : true}, function (err, item) {
                     if (err) {
-
+                        console.log("error ", err);
                     } else {
                      var currentMenu = item.name;
                      db.collection('dishes', function (err, dishCollection) {

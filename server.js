@@ -30,6 +30,8 @@ MongoClient.connect(url, function(err, db) {
     var validation = require('./routes/validation.js')({database : db});
     var tags = require('./routes/tags')({database : db});
     var updates = require('./routes/updates')({redis: client});
+    var clients = require('./routes/clients')({database : db});
+    var orders = require('./routes/orders')({redis: client});
 
     var files = require('./routes/files');
     var logOn = require('./routes/logon');
@@ -69,19 +71,25 @@ var multipartMiddleware = multipart({
     uploadDir: './myTemp' 
 });
 
-//PAYMENT ENDPOINT
+//PAYMENT ENDPOINT take ALL payments to a route
 secureApp.get("/payments/client_token", function (req, res) {
   gateway.clientToken.generate({}, function (err, response) {
-    //console.log('token requested ' + response.clientToken, typeof(response.clientToken));
+    if (err) console.log(err);
     res.send({accessToken: response.clientToken});
   });
 });
 
 secureApp.post("/payments/payment-methods", function (req, res) {
   var cart = req.body.cart;
+  var fbId = req.body.fbId;
   var nonce = req.body.nonce;
 
+  console.log(req.body);
+
   console.log('processing payment');
+  console.log('-------------------');
+  console.log('FbId: ', fbId);
+  console.log('Nonce: ', nonce);
   console.log('-------------------');
 
   var sumCart = {};
@@ -112,6 +120,8 @@ secureApp.post("/payments/payment-methods", function (req, res) {
           console.log(result);
         } else {
           res.sendStatus(200);
+          // orders should have an ORDER ID nonce can be used as
+          orders.addOrder({userId: fbId, order: cart.cart});
           console.log('transaction OK');
         }
       });
@@ -137,6 +147,9 @@ secureApp.get('/api/menus/:id', validation.validate, menus.findById);
 secureApp.get('/api/tags/:id', validation.validate, tags.findById);
 secureApp.get('/api/ingredients/:id', validation.validate, ingredients.findById);
 secureApp.get('/api/categories/:id', validation.validate, categories.findById);
+secureApp.get('/api/clients/fb/:fbId', clients.getClientByFbId);
+secureApp.get('/api/clients/phone/:phone', clients.getClientByPhone);
+secureApp.get('/api/orders', orders.getOrders);
 
 //PUT REQUEST
 secureApp.put('/api/dishes/:id', validation.validate, updates.updateTimestamp, dishes.updateDish);
@@ -155,6 +168,7 @@ secureApp.post('/api/ingredients', validation.validate, updates.updateTimestamp,
 secureApp.post('/api/file-upload', multipartMiddleware, updates.updateTimestamp, files.uploadPhoto);
 secureApp.post('/api/video-upload', validation.validate, updates.updateTimestamp, multipartMiddleware,files.uploadVideo);
 secureApp.post('/api/clear-files', files.clearImagelist); //SECURITY HOLE!! ADD CREDENTIALS TO THIS REQ
+secureApp.post('/api/clients', clients.saveClient);
 
 //DELETE REQUEST
 secureApp.delete('/api/dishes/:id', validation.validate, updates.updateTimestamp, dishes.deleteDish);

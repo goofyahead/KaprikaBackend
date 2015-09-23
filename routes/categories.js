@@ -7,7 +7,8 @@ module.exports = function initialize (params) {
     module.findAll = function(req, res) {
         console.log('Retrieving all categories:');
         db.collection('categories').find().toArray(function(err, items) {
-            console.log(items);
+            if (err) console.log(err);
+            console.log('categories', items);
             res.send(items);
         });
     };

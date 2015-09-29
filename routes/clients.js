@@ -13,8 +13,14 @@ module.exports = function initialize (params) {
                 console.log('unauthorized access');
             } else {
                 console.log('saved user');
-                res.sendStatus(200).send("OK");
+                res.send("OK");
             }
+        });
+    }
+
+    module.getClientByFbIdInternal = function (fbId, cb) {
+        db.collection('clients').findOne({fbId: fbId}, function (err, result) {
+            cb(result);
         });
     }
 

@@ -80,22 +80,24 @@ secureApp.get("/payments/client_token", function (req, res) {
 });
 
 secureApp.post("/payments/payment-methods", function (req, res) {
-  var cart = req.body.cart;
-  var fbId = req.body.fbId;
+  var items = req.body.itemList;
   var nonce = req.body.nonce;
+  var order = req.body;
 
   console.log(req.body);
 
+  console.log('-------------------');
   console.log('processing payment');
   console.log('-------------------');
-  console.log('FbId: ', fbId);
+  console.log('FbId: ', order.fbId);
   console.log('Nonce: ', nonce);
+  console.log('TimeStamp: ', Date.now());
   console.log('-------------------');
 
   var sumCart = {};
   var total = 0;
 
-  async.forEachOf(cart.cart, function (value, key, callback) {
+  async.forEachOf(items, function (value, key, callback) {
     dishes.getById(key, function (dish) {
       sumCart[key] = parseFloat(parseFloat(dish.price).toFixed(2)) * parseInt(value.quantity);
       callback();
@@ -108,23 +110,41 @@ secureApp.post("/payments/payment-methods", function (req, res) {
       total = total + parseFloat(sumCart[id].toFixed(2));
     }
 
-    console.log(total.toFixed(2));
+  // Set time where server receive the order
+  order.timestamp = Date.now().toString();
+  order.status  = "RECIBIDO";
+  order.amount = total.toFixed(2);
+  console.log('-------------------');
+  console.log('       ' + total.toFixed(2));
+  console.log('-------------------');
+  console.log(total.toFixed(2));
+
+  clients.getClientByFbIdInternal(order.fbId, function (client) {
+    console.log('------------------------');
+    console.log('       CLIENT DATA      ');
+    console.log('------------------------');
+    console.log (client);
+
+    order.address = client;
 
     gateway.transaction.sale({
-      amount: total.toFixed(2),
-      paymentMethodNonce: nonce,
-      }, 
-      function (err, result) {
-        if (err) {
-          res.sendStatus(500);
-          console.log(result);
-        } else {
-          res.sendStatus(200);
-          // orders should have an ORDER ID nonce can be used as
-          orders.addOrder({userId: fbId, order: cart.cart});
-          console.log('transaction OK');
-        }
-      });
+    amount: total.toFixed(2),
+    paymentMethodNonce: nonce,
+    }, 
+    function (err, result) {
+      if (err) {
+        res.sendStatus(500);
+        console.log(result);
+      } else {
+        res.sendStatus(200);
+        // orders should have an ORDER ID nonce can be used as
+        orders.addOrder(order);
+        console.log('transaction OK');
+      }
+    });
+  });
+
+  
   });
 });
 

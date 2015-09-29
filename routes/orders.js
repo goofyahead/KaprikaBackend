@@ -12,12 +12,16 @@ module.exports = function initialize (params) {
     }
 
     module.getOrders = function (req, res) {
-        client.lrange(0, -1, function (err, replies) {
-            res.send(replies);
+        client.lrange("orders", 0, -1, function (err, replies) {
+            if (err) console.log(err);
+            console.log("orders: " + replies);
+            //parse each object
+            var parsedResponse = replies.map(function parse (obj){
+                return JSON.parse(obj);
+            });
+            res.send(parsedResponse);
         });
     }
-
     // modules set order completed
-
     return module;
 }

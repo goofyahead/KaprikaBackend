@@ -2,9 +2,9 @@
 
 define(['backbone','jquery','text!templates/dish.html','views/modal','bootstrap','models/categories',
 	'models/menus','models/tags','models/ingredients','models/dishes','views/modal_relations','views/modalPictureSelect',
-	'views/ModalView'],
+	'views/ModalView', 'views/modalOptions'],
 	function(Backbone, $, dish, ModalView, bootstrap, Categories,
-	 Menus, Tags, Ingredients, Dishes, ModalRelations, ModalPicture, BootstapModal) {
+	 Menus, Tags, Ingredients, Dishes, ModalRelations, ModalPicture, BootstapModal, ModalOption) {
 	var DishView = Backbone.View.extend({
 		template: _.template(dish),
 
@@ -28,9 +28,11 @@ define(['backbone','jquery','text!templates/dish.html','views/modal','bootstrap'
 			'click #tags-menu .newItem': 'launch_modal_tags',
 			'click #ingredients-menu .newItem': 'launch_modal_ingredients',
 			'click #relations-menu .newItem': 'launch_modal_relations',
+			'click #options-menu .newItem': 'launch_modal_options',
 			'click #delete' : 'delete_dish',
 			'click #save-basic-changes': 'save_basic',
 			'click #demo' : 'toggleDemo',
+			'click #option' : 'launch_modal_options',
 			'drop #dropVideo' : 'dropVideo',
 			'dragover #dropVideo' : 'dragover'
 		},
@@ -102,6 +104,15 @@ define(['backbone','jquery','text!templates/dish.html','views/modal','bootstrap'
 			var description = $('#inputDescription').val();
 			var price = $('#inputPrice').val();
 			this.model.updateBasicInfo(name, description, price);
+		},
+
+		launch_modal_options: function (ev) {
+			var selected = $(ev.currentTarget).attr('value');
+			console.log('launching: ' ,this.model.get('options'));
+			var emptyOptionModal = new ModalOption({model : this.model, selection : selected});
+			emptyOptionModal.render();
+			$('#modalplacer').html(emptyOptionModal.el);
+			$('#myModal').modal();
 		},
 
 		launch_modal_relations: function(ev) {

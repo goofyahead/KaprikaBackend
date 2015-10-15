@@ -137,7 +137,12 @@ secureApp.post("/payments/payment-methods", function (req, res) {
         console.log(result);
       } else {
         res.sendStatus(200);
-        // orders should have an ORDER ID nonce can be used as
+        // add order to print queue
+        orders.addOrderToPrint(order);
+
+        // store orders for historic too in mongoDB
+
+        // this goes to orders for web view
         orders.addOrder(order);
         console.log('transaction OK');
       }
@@ -158,6 +163,7 @@ secureApp.get('/api/unasignedvideos', files.getUnasignedVideos);
 //A public API can be specified for get categories etc, that will hide the ones
 //not in current selection.
 secureApp.get('/api/lastUpdate', updates.getTimestamp);
+secureApp.get('/api/ordersToPrint', orders.getOrdersToPrint);
 
 //GET REQUESTS
 secureApp.get('/api/dishes', validation.validate, dishes.findAll);

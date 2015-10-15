@@ -1,0 +1,20 @@
+<!-- Modal -->
+<div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	  <div class="modal-header">
+	    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+	    <h3 id="myModalLabel">Modifica las opciones para un plato:</h3>
+	  </div>
+	  <div class="modal-body">
+	  	<div class="center-div-modal">
+	  	<div class="row">
+	  		<input type="text" class="form-control" id="name" value=<%= selection %> >
+		  	<% _.each(options, function(options, key) { console.log(options); %> 
+		  	<% }); %>
+		</div>
+	  </div>
+	</div>
+	  <div class="modal-footer">
+	    <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+	    <button class="btn btn-primary" data-dismiss="modal" id="save-modal">Save changes</button>
+	  </div>
+</div>

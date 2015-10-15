@@ -65,7 +65,7 @@
 			<li class="nav-header" id='left_list_header'>Categorias</li>
 			<% console.log(categories); %>
 			<% _.each(categories, function(dishElement){ console.log(dishElement); %>
-			<li><a href="#"> <%= dishElement.name %> </a> </li>
+			<li><a href="#"> <%= dishElement.name %> </a> </li>b/
 			<% }); %>
 			<li class="newItem"><a href="#">Editar <i class="icon-plus pull-right"></i></a> </li>
 		</ul>
@@ -102,6 +102,16 @@
 			<li><a href="#"> <%= ingredientElement.name %> </a> </li>
 			<% }); %>
 			<li class="newItem"><a href="#">Editar <i class="icon-plus pull-right"></i></a> </li>
+		</ul>
+	</div>
+	<div class="span3" id="options">
+		<ul class="nav nav-tabs nav-stacked" id='options-menu'>
+			<li class="nav-header" id='left_list_header'>Opciones</li>
+			<!-- <% console.log(categories); %> -->
+			<% _.each(options, function(optionsArray, key){ console.log(key); %>
+			<li><a href="#" id="option" value=<%= key %> > <%= key %> </a> </li>
+			<% }); %>
+			<li class="newItem"><a href="#">Añadir<i class="icon-plus pull-right"></i></a> </li>
 		</ul>
 	</div>
 	<% } %>

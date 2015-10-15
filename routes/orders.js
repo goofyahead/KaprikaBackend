@@ -11,10 +11,27 @@ module.exports = function initialize (params) {
         return;
     }
 
+    module.addOrderToPrint = function (order) {
+        console.log('updating timestamp');
+        client.rpush("ordersToPrint", JSON.stringify(order), redis.print);
+        return;
+    }
+
+    module.getOrdersToPrint = function (req, res) {
+        client.lpop("ordersToPrint", function (err, reply) {
+            if (reply) {
+                console.log("requested orders to print:");
+                console.log(JSON.parse(reply));
+            }
+            res.send(JSON.parse(reply));
+
+        });
+    }
+
     module.getOrders = function (req, res) {
         client.lrange("orders", 0, -1, function (err, replies) {
             if (err) console.log(err);
-            console.log("orders: " + replies);
+            // console.log("orders: " + replies);
             //parse each object
             var parsedResponse = replies.map(function parse (obj){
                 return JSON.parse(obj);

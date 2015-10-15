@@ -21,6 +21,7 @@ define(['backbone','eventDispatcher','models/modelErrorHandler'], function(Backb
 	        menu: [],
 	        video: null,
 	        demo: false,
+	        options: {'pan' : ['centeno', 'integral', 'mollete'], 'acompañamiento' : ['patatas', 'ensalada']}
     	},
 
     	toggleDemo: function () {
@@ -76,6 +77,12 @@ define(['backbone','eventDispatcher','models/modelErrorHandler'], function(Backb
 					}
 				}
 			});
+		},
+
+		updateOptions: function (options) {
+			this.set({options: options});
+			this.save();
+			this.trigger('change');
 		},
 
 		updateRelations: function (relations) {

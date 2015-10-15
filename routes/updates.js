@@ -13,8 +13,13 @@ module.exports = function initialize (params) {
 
     module.getTimestamp = function (req, res) {
         client.get("last_update", function (err, reply) {
-            console.log('last modification timestamp ' + reply);
-            res.send(reply);
+            if (reply){
+                console.log('last modification timestamp ' + reply);
+                res.send(reply);
+            } else {
+                console.log('No timestam from db, update');
+                res.send("0");
+            }
         });
     }
 

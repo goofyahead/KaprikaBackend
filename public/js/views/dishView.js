@@ -14,6 +14,7 @@ define(['backbone','jquery','text!templates/dish.html','views/modal','bootstrap'
 		initialize: function() {
 			console.log('initializing dishView');
 			this.model.on('change', this.render, this);
+			this.model.bind('change', this.render, this);
 		},
 
 

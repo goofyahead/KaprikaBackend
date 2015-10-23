@@ -5,6 +5,8 @@ define(['backbone', 'text!templates/modalOptions.html'], function(Backbone, temp
 
 		selection: [],
 
+		currentOptionsGlobal : {},
+
 		template: _.template(template),
 
 		tagName: 'div',
@@ -19,11 +21,49 @@ define(['backbone', 'text!templates/modalOptions.html'], function(Backbone, temp
 
 		events: {
 			'click #save-modal' : 'save_clicked',
-			'click #modal-element': 'button_clicked'
+			'click #modal-element': 'button_clicked',
+			'click #delete-option': 'delete_option',
+			'click #add-option': 'add_option',
+			'click #delete-complete': 'del_cat',
+			'click #cat-name-change': 'cat_name_change'
+		},
+
+		del_cat : function (ev) {
+			var catToDel = $(ev.currentTarget).attr('data-value');
+			this.model.deleteOption(catToDel);
+		},
+
+		cat_name_change : function (ev) {
+			console.log(this.options.selection + "is now " + $("#cat-name").val());
+			var newName = $("#cat-name").val();
+			this.model.updateCatName(this.options.selection, newName);
+			this.options.selection = newName;
+			console.log(this.model);
+		},
+
+		add_option: function (ev) {
+			console.log( $('#new-option').val() );
+			var given = $('#new-option').val();
+			var newOptions = this.model.get('options');
+			newOptions[this.options.selection].push(given);
+			console.log(newOptions);
+			this.model.set({options : newOptions});
+			$("#options-div").append('<div class="row" id="row-' + given + '"><div class="span2">' + given + ' </div> <div class="span2"><button type="button" class="btn btn-danger" id="delete-option" data-value='+ given+' >Eliminar</button></div></div>');
+		},
+
+		delete_option: function (ev) {
+			console.log(this.model);
+			var newOptions = this.model.get('options');
+			console.log(newOptions);
+			console.log(newOptions[this.options.selection] , $(ev.currentTarget).attr('data-value'));
+			newOptions[this.options.selection] = _.without(newOptions[this.options.selection], $(ev.currentTarget).attr('data-value'));
+			this.model.set({options : newOptions});
+			console.log(this.model);
+			$('#row-' + $(ev.currentTarget).attr('data-value')).remove();
 		},
 
 		save_clicked: function(ev){
-			this.options.having.updateFields(this.options.what, this.selection);
+			this.model.save();
 		},
 
 		button_clicked: function(ev){
@@ -55,8 +95,8 @@ define(['backbone', 'text!templates/modalOptions.html'], function(Backbone, temp
 		render: function() {
 			console.log("in render", this.model.get('options')[this.options.selection]);
 			var compiledTemplate = this.template({
-            	options: this.model.get('options')[this.options.selection],
-            	selection : this.options.selection
+            	options: this.model.get('options')[this.options.selection] || [],
+            	selection : this.options.selection || ""
         	});
 			this.$el.html(compiledTemplate);
 			return this;

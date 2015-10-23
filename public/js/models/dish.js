@@ -21,7 +21,7 @@ define(['backbone','eventDispatcher','models/modelErrorHandler'], function(Backb
 	        menu: [],
 	        video: null,
 	        demo: false,
-	        options: {'pan' : ['centeno', 'integral', 'mollete'], 'acompañamiento' : ['patatas', 'ensalada']}
+	        options: {}
     	},
 
     	toggleDemo: function () {
@@ -62,6 +62,20 @@ define(['backbone','eventDispatcher','models/modelErrorHandler'], function(Backb
 			this.trigger('change');
 		},
 
+		updateCatName: function (previous, newName) {
+			if (previous){
+				var currentOptions = this.get('options');
+				currentOptions[newName] = currentOptions[previous]; // check recurrency copy by ref
+				delete currentOptions[previous];
+				console.log('status options: ', currentOptions);
+				this.set({'options': currentOptions});
+			} else {
+				var optionss = this.get('options');
+				optionss[newName] = [];
+				this.set({'options' : optionss});
+			}
+		},
+
 		updateBasicInfo: function ( vName, vDescription, vPrice) {
 			var that = this;
 			var wasNew = this.isNew();
@@ -79,8 +93,10 @@ define(['backbone','eventDispatcher','models/modelErrorHandler'], function(Backb
 			});
 		},
 
-		updateOptions: function (options) {
-			this.set({options: options});
+		deleteOption: function (catToDel){
+			var currentOptions = this.get('options');
+			delete currentOptions[catToDel];
+			this.set({options : currentOptions});
 			this.save();
 			this.trigger('change');
 		},

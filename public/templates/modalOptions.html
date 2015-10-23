@@ -6,10 +6,29 @@
 	  </div>
 	  <div class="modal-body">
 	  	<div class="center-div-modal">
+	  		<div class="row">
+	  			<button type="button" class="btn btn-danger" id="delete-complete" data-value=<%= selection %> >Eliminar esta opcion</button>
+	  		</div>
 	  	<div class="row">
-	  		<input type="text" class="form-control" id="name" value=<%= selection %> >
-		  	<% _.each(options, function(options, key) { console.log(options); %> 
-		  	<% }); %>
+	  		<input type="text" class="form-control" id="cat-name" value=<%= selection %> > <button type="button" class="btn btn-info" id="cat-name-change">Modificar</button>
+	  		<div id="options-div">
+			  	<% _.each(options, function(options, key) { console.log(options); %> 
+			  		<div class="row" id="row-<%= options %>">
+				  		<div class="span2"><%= options %> </div> 
+				  		<div class="span2">
+				  			<button type="button" class="btn btn-danger" id="delete-option" data-value=<%= options %> >Eliminar</button>
+				  		</div>
+				  	</div>
+			  	<% }); %>
+		  	</div>
+		  	<div class="row">
+		  		<div class="span2">
+		  			<input type="text" class="form-control" id="new-option" >
+		  		</div>
+		  		<div class="span2">
+		  			<button type="button" class="btn btn-info" id="add-option">Añadir</button>
+		  		</div>
+		  	</div>  	 
 		</div>
 	  </div>
 	</div>

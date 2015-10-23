@@ -67,6 +67,7 @@ secureApp.use(cookieParser());
 
 
 var multipart = require('connect-multiparty');
+
 var multipartMiddleware = multipart({
     uploadDir: './myTemp' 
 });
@@ -85,6 +86,8 @@ secureApp.post("/payments/payment-methods", function (req, res) {
   var order = req.body;
 
   console.log(req.body);
+  console.log('----------ITEMS--------')
+  console.log(JSON.stringify(items));
 
   console.log('-------------------');
   console.log('processing payment');

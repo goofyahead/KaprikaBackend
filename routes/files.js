@@ -30,10 +30,12 @@ exports.uploadVideo = function(req, res) {
     var childProcess = require('child_process'),ffmpeg;
     console.log('uploading video0');
     console.log(req.param('filename'));
+    
     var fileName = req.param('filename').split(' ').join('_');
     var fileNameWirhoutExt = fileName.split('.')[0];
     console.log(fileNameWirhoutExt);
     var tmp_path = './' + req.files.uploadingVideo.path;
+    var pic_path = './' + req.files.uploadPicture.path;
 
     var target_path = '';
     if (fileName.indexOf('auto_') == -1) {
@@ -44,15 +46,15 @@ exports.uploadVideo = function(req, res) {
 
     //THIS SOULD BE ADAPTED USING PROMISES
     ffmpeg = childProcess.exec(
-        'ffmpeg -i ' + tmp_path + ' -s 480x360 -b 500k -vcodec libx264 -y ' + target_path, 
+        'ffmpeg -i ' + tmp_path + ' -s 1280x720 -b 500k -vcodec libx264 -y ' + target_path, 
         function (error, stdout, stderr) {
            if (error) {
-             console.log(error.stack);
+             // console.log(error.stack);
              console.log('Error code: ' + error.code);
-             console.log('Signal received: ' + error.signal);
+             // console.log('Signal received: ' + error.signal);
             }
-         console.log('Child Process STDOUT: ' + stdout);
-         console.log('Child Process STDERR: ' + stderr);
+         // console.log('Child Process STDOUT: ' + stdout);
+         // console.log('Child Process STDERR: ' + stderr);
      });
 
     ffmpeg.on('exit', function (code) {
@@ -64,13 +66,21 @@ exports.uploadVideo = function(req, res) {
         if (fileName.indexOf('auto_') == -1) {
             createThumbnails(target_path, '640x480', __dirname + 
             '/../public/images/thumbnail' + fileNameWirhoutExt, res, thumbnailFile, fileNameWirhoutExt + '.mp4');
-        } else {
-            createThumbnails(target_path, '640x480', __dirname + 
-            '/../public/unasignedImages/thumbnail' + fileNameWirhoutExt, res, thumbnailFile, fileNameWirhoutExt + '.mp4');
-        }
 
-        
+
+        } else {
+            res.send('OK');
+            console.log('pic path is:' + pic_path);
+            console.log('video path is: ' + tmp_path);
+            // get image from upload
+            // fs.unlinkSync(pic_path);
+            fs.renameSync(pic_path, './public/unasignedImages/' + fileNameWirhoutExt + '.jpg', function (err){ console.log(err);});
+            // createThumbnails(target_path, '640x480', __dirname + 
+            // '/../public/unasignedImages/thumbnail' + fileNameWirhoutExt, res, thumbnailFile, fileNameWirhoutExt + '.mp4');
+        }
     });
+
+
 }
 
 function createThumbnails (origin, size, filename, res, thumbName, videoName) {

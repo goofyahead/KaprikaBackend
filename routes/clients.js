@@ -1,6 +1,5 @@
 module.exports = function initialize (params) {
 
-    console.log(params);
     var db = params.database;
     var ObjectId = require('mongodb').ObjectID;
 
@@ -25,12 +24,14 @@ module.exports = function initialize (params) {
     }
 
     module.getClientByFbId = function (req, res) {
+        var fbId = req.params.fbId;
         db.collection('clients').findOne({fbId: fbId}, function (err, result) {
             res.send(result);
         });
     }
 
     module.getClientByPhone = function (req, res) {
+        var phone = req.params.phone;
          db.collection('clients').findOne({phone: phone}, function (err, result) {
             res.send(result);
         });

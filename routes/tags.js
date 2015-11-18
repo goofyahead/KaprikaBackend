@@ -1,7 +1,6 @@
 
 module.exports = function initialize (params) {
 
-    console.log(params);
     var db = params.database;
     var ObjectId = require('mongodb').ObjectID;
 

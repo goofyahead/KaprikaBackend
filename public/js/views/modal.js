@@ -18,7 +18,7 @@ define(['backbone', 'text!templates/modal.html'], function(Backbone, template){
 		},
 
 		addToSelection: function (relation) {
-			this.selection.push(relation.name);
+			this.selection.push(relation);
 		},
 
 		events: {

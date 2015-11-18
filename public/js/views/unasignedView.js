@@ -29,10 +29,18 @@ define(['backbone','text!templates/unasigned.html', 'eventDispatcher', 'models/d
 			console.log('edit clicked ' + $(event.currentTarget).attr('data-videoname'));
 			var edited = new Dish();
 			edited.set({video : videoName});
+			edited.set({picture: videoName.split('.')[0] + '.jpg'});
+
+			console.log('is new?' + edited.isNew());
+			console.log(edited);
+
+			console.log('pic name should be' + videoName.split('.')[0]);
+
 			edited.save({},{
     			success: function(model, response, options) {
 					console.log('saved correctly');
-					console.log(model.id);
+					console.log(response);
+					console.log(model);
 					Backbone.history.navigate('/#dishes/' + model.id, true);
 					console.log('navigate!');
 				},

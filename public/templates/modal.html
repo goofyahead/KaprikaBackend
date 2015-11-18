@@ -9,13 +9,15 @@
 	  	<div class="row">
 	  		<% var cont = 0; %>
 		  	<% _.each(myCategos, function(cat) { console.log(cat); %> 
-		  		<% if ( _.indexOf(myHaving, cat.name) == -1) {   %>
-		  		<% if (cont % 4 == 0) { %>
-		  			</div><div class="row spacer">
-		  		<% } %>
-		  		<div class="span2">
-		  			<button id="modal-element" class="btn btn-small btn-block"> <%= cat.name %> </button>
-		  		</div>
+		  		<% console.log(myHaving); %>
+		  		<% console.log(cat); %>
+		  		<% if ( _.findIndex(myHaving, {name : cat.name}) == -1) {   %>
+			  		<% if (cont % 4 == 0) { %>
+			  			</div><div class="row spacer">
+			  		<% } %>
+			  		<div class="span2">
+			  			<button id="modal-element" class="btn btn-small btn-block"> <%= cat.name %> </button>
+			  		</div>
 		  		<% } else { %>
 		  		<div class="span2">
 		  			<button id="modal-element" class="btn btn-primary btn-small btn-block"> <%= cat.name %> </button>

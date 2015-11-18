@@ -1,6 +1,5 @@
 module.exports = function initialize (params) {
 
-    console.log(params);
     var client = params.redis;
     var redis = require("redis");
 

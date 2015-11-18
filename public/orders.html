@@ -40,6 +40,7 @@
             dataType: 'json',
             cache: false,
             success: function(data) {
+              console.log('orders retrieved from server this is the first one:');
               console.log(data[0]);
               this.setState({data: data});
             }.bind(this),
@@ -55,10 +56,17 @@
           setInterval(this.getDataFromServer, 5 * 1000);
         },
         render: function() {
-          var orderNodes = this.state.data.map(function (order) {
-            return (
-              <Order data={order} key={order.nonce}/>
-            );
+          var orderNodes = this.state.data.map(function (order, index) {
+            if (index == 0){
+              console.log('FIRST');
+              return (
+                <Order data={order} editable={true} key={order.nonce}/>
+              );
+            } else {
+              return (
+                <Order data={order} editable={false} key={order.nonce}/>
+              );
+            }
           });
 
           return (
@@ -69,12 +77,53 @@
         }
       });
 
+      var OrderReadyButton = React.createClass({
+        getInitialState: function() {
+          return {ready: false};
+        },
+
+        handleClick: function(event) {
+          if (this.props.editable) {
+              $.ajax({
+              type: "POST",
+              data: {status : !this.state.ready},
+              url: '/api/orders/' + this.props.orderId,
+              dataType: 'json',
+              cache: false,
+              success: function(data) {
+                console.log(data);
+              }.bind(this),
+              error: function(xhr, status, err) {
+                console.error(this.props.url, status, err.toString());
+              }.bind(this)
+            });
+
+            this.setState({ready: !this.state.ready});
+          } else {
+            console.log('you cant finish upper order');
+            alert('Los pedidos deben ser terminados en orden');
+          }
+        },
+        render: function() {
+          var text = this.state.ready ? 'Listo' : 'En preparacion';
+          var type = this.state.ready ? 'btn btn-success btn-block' : 'btn btn-warning btn-block';
+
+          return (
+            <button onClick={this.handleClick} type="button" className={type}>
+            {text}
+            </button>
+          );
+        }
+      });
+
       var Item = React.createClass({
 
         render: function () {
-          console.log(this.props.line.optionSelected);
+          console.log("OPTIONS SELECTED: " + this.props.line);
+
           var optionsObject = this.props.line.optionSelected;
           var optionNodes = Object.keys(optionsObject).map( function (value, index, arr) {
+            console.log(value);
              return (
                 <OptionSelected name={value} selection={optionsObject[value]} />
               );
@@ -136,7 +185,10 @@
             itemArray.push(itemListObject[key]);
           });
 
+          console.log('Order item array is: ', itemArray);
+
           var itemNodes = itemArray.map( function (purchase) {
+            console.log(purchase);
             return (
               <Item line={purchase} key={purchase.item._id}/>
             );
@@ -177,7 +229,7 @@
                 </div>
                 <div className="row">
                 <div className="col-md-4 col-md-offset-8">
-                  <button type="button" className="btn btn-success btn-block">A reparto</button>
+                  <OrderReadyButton editable={this.props.editable} orderId={this.props.data.nonce}/>
                 </div>
                 </div>
               </div>

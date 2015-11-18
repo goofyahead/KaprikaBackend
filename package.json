@@ -14,7 +14,9 @@
 		"underscore" : "*",
 		"redis" : "0.12.1",
 		"braintree" : "1.29.0",
-		"async" : "1.4.2"
+		"async" : "1.4.2",
+		"node-gcm" : "0.12.0",
+		"node-uuid" : "1.4.3"
 		},
 	"engines": {
 		"node": "0.8.x",

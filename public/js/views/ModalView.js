@@ -125,7 +125,7 @@
       //Create the modal container
       $el.html(options.template(options));
 
-      var $content = this.$content = $el.find('.modal-body')
+      var $content = this.$content = $el.find('.modal-body');
 
       //Insert the main content if it's a view
       if (content.$el) {

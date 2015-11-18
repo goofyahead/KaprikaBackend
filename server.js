@@ -31,7 +31,7 @@ MongoClient.connect(url, function(err, db) {
     var tags = require('./routes/tags')({database : db});
     var updates = require('./routes/updates')({redis: client});
     var clients = require('./routes/clients')({database : db});
-    var orders = require('./routes/orders')({redis: client});
+    var orders = require('./routes/orders')({redis: client, database : db});
 
     var files = require('./routes/files');
     var logOn = require('./routes/logon');
@@ -180,6 +180,11 @@ secureApp.get('/api/clients/fb/:fbId', clients.getClientByFbId);
 secureApp.get('/api/clients/phone/:phone', clients.getClientByPhone);
 secureApp.get('/api/orders', orders.getOrders);
 
+// APP CLIENTE GETS
+secureApp.get('/api/clientActiveOrders/fb/:fbId', orders.getActiveOrdersFromClient);
+secureApp.get('/api/clientHistoryOrders/fb/:fbId', orders.getHistoryOrdersFromClient);
+secureApp.get('/api/clientFavOrders/fb/:fbId', orders.getFavOrdersFromClient);
+
 //PUT REQUEST
 secureApp.put('/api/dishes/:id', validation.validate, updates.updateTimestamp, dishes.updateDish);
 secureApp.put('/api/categories/:id', validation.validate, updates.updateTimestamp, categories.updateCategory);
@@ -195,9 +200,12 @@ secureApp.post('/api/menus', validation.validate, updates.updateTimestamp, menus
 secureApp.post('/api/tags', validation.validate, updates.updateTimestamp, tags.addTag);
 secureApp.post('/api/ingredients', validation.validate, updates.updateTimestamp, ingredients.addIngredient);
 secureApp.post('/api/file-upload', multipartMiddleware, updates.updateTimestamp, files.uploadPhoto);
-secureApp.post('/api/video-upload', validation.validate, updates.updateTimestamp, multipartMiddleware,files.uploadVideo);
+secureApp.post('/api/video-upload', updates.updateTimestamp, multipartMiddleware,files.uploadVideo);
 secureApp.post('/api/clear-files', files.clearImagelist); //SECURITY HOLE!! ADD CREDENTIALS TO THIS REQ
 secureApp.post('/api/clients', clients.saveClient);
+secureApp.post('/api/orders/:id', orders.updateOrderStatus);
+secureApp.post('/api/orderFromKaprika', orders.internalOrder);
+
 
 //DELETE REQUEST
 secureApp.delete('/api/dishes/:id', validation.validate, updates.updateTimestamp, dishes.deleteDish);
